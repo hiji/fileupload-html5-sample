@@ -1,0 +1,46 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <script src="js/jquery-2.1.4.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#file').on('change', function(event) {
+                var file = event.target.files[0];
+                $('#size').val(file.size);
+                window.URL = window.URL || window.webkitURL;
+                $('#url').val(window.URL.createObjectURL(file));
+            });
+            $('#upload').on('click', function(event) {
+                var xhr = new XMLHttpRequest();
+                xhr.onload = function() {
+                    var result = xhr.response;
+                    var formData = new FormData(document.forms[0]);
+                    formData.append("file", result);
+                    var submitReq = new XMLHttpRequest();
+                    submitReq.open('POST', '/upload', false);
+                    submitReq.send(formData);
+
+
+                };
+                xhr.responseType = "blob";
+                xhr.open("GET", $('#url').val());
+                xhr.send();
+            });
+        });
+    </script>
+</head>
+<body>
+File to upload: <input type="file" id="file" name="file" />
+<form id="form">
+    <br />
+    Name: <input type="text" id="name" name="name" th:value="${name}" />
+    <br />
+    Size: <input type="text" id="size" name="size" th:value="${size}" />
+    <br />
+    URL: <input type="text" id="url" name="url" th:value="${url}" />
+    <br />
+    <input type="button" id="upload" value="upload" /> Press here to upload the file!
+    <br />
+    <br />
+</form>
+</body>
+</html>
